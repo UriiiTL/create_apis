@@ -10,7 +10,6 @@ from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-
 @app.get(
     "/", 
     status_code=202,
@@ -23,34 +22,6 @@ def get_root():
         "datatime": "12/02/2026"
         }
     return response
-
-class Item(BaseModel):
-    name: str
-    description: str | None = None
-    price: float
-    tax: float | None = None
-
-
-@app.put("/items/{item_id}")
-async def update_item(
-    item_id: int,
-    item: Annotated[
-        Item,
-        Body(
-            examples=[
-                {
-                    "name": "Foo",
-                    "description": "A very nice Item",
-                    "price": 35.4,
-                    "tax": 3.2,
-                }
-            ],
-        ),
-    ],
-):
-    results = {"item_id": item_id, "item": item}
-    return results
-
 
 
 
@@ -67,7 +38,7 @@ DATABASE = "agenda.db"
     """
 )
 async def get_contactos(
-    limit: int = 10, 
+    limit: int = 120, 
     skip: int = 0, 
 ):
     try:
@@ -228,3 +199,48 @@ async def get_contacto(
                 "id_contacto": id_contacto
             }
         )
+
+@app.post("/v1/contactos")
+async def create_contacto(data: dict):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "INSERT INTO contactos (nombre, telefono, email) VALUES (?, ?, ?)",
+        (data["nombre"], data["telefono"], data["email"])
+    )
+
+    conn.commit()
+    conn.close()
+
+    return {"message": "Contacto creado"}
+
+@app.put("/v1/contactos/{id_contacto}")
+async def update_contacto(id_contacto: int, data: dict):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "UPDATE contactos SET nombre=?, telefono=?, email=? WHERE id_contacto=?",
+        (data["nombre"], data["telefono"], data["email"], id_contacto)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return {"message": "Contacto actualizado"}
+
+@app.delete("/v1/contactos/{id_contacto}")
+async def delete_contacto(id_contacto: int):
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM contactos WHERE id_contacto=?",
+        (id_contacto,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return {"message": "Contacto eliminado"}
