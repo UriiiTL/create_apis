@@ -1,5 +1,6 @@
 import web
 import requests
+import os
 
 urls = (
     '/', 'Index',
@@ -8,11 +9,16 @@ urls = (
     '/delete/(\\d+)', 'Delete'
 )
 
+web.config.debug = False
+
 app_web = web.application(urls, globals())
 render = web.template.render('templates/')
 
-API_CONTACTOS = "http://127.0.0.1:8000/v1/contactos"
-API_CONTACTO = "http://127.0.0.1:8000/v1/contacto"
+PUERTO = os.environ.get("PORT", "8000")
+BASE_URL = f"http://127.0.0.1:{PUERTO}/v1"
+
+API_CONTACTOS = f"{BASE_URL}/contactos"
+API_CONTACTO = f"{BASE_URL}/contactos"
 
 class Index:
     def GET(self):

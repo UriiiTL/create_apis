@@ -14,8 +14,6 @@ from webapp import wsgi_app
 
 app = FastAPI()
 
-
-
 DATABASE = "agenda.db"
 
 @app.get(
