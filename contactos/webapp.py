@@ -8,7 +8,7 @@ urls = (
     '/delete/(\\d+)', 'Delete'
 )
 
-app = web.application(urls, globals())
+app_web = web.application(urls, globals())
 render = web.template.render('templates/')
 
 API_CONTACTOS = "http://127.0.0.1:8000/v1/contactos"
@@ -65,5 +65,7 @@ class Delete:
         raise web.seeother('/')
 
 
+wsgi_app = app_web.wsgifunc()
+
 if __name__ == "__main__":
-    app.run()
+    app_web.run()

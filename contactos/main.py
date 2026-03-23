@@ -7,21 +7,10 @@ import sqlite3
 from datetime import datetime
 import pytz
 from fastapi.responses import JSONResponse
+from webapp import wsgi_app
+from fastapi.middleware.wsgi import WSGIMiddleware
 
 app = FastAPI()
-
-@app.get(
-    "/", 
-    status_code=202,
-    summary="Ednpoint raiz",
-    description="Bienvenido a la api de agenda"
-    )
-def get_root():
-    response = {
-        "message": "Api de la agenda",
-        "datatime": "12/02/2026"
-        }
-    return response
 
 
 
@@ -244,3 +233,5 @@ async def delete_contacto(id_contacto: int):
     conn.close()
 
     return {"message": "Contacto eliminado"}
+
+app.mount("/", WSGIMiddleware(wsgi_app))
