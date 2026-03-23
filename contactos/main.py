@@ -9,6 +9,8 @@ import pytz
 from fastapi.responses import JSONResponse
 from webapp import wsgi_app
 from fastapi.middleware.wsgi import WSGIMiddleware
+import os
+from webapp import wsgi_app
 
 app = FastAPI()
 
@@ -235,3 +237,8 @@ async def delete_contacto(id_contacto: int):
     return {"message": "Contacto eliminado"}
 
 app.mount("/", WSGIMiddleware(wsgi_app))
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
