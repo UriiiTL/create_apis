@@ -18,7 +18,7 @@ PUERTO = os.environ.get("PORT", "8000")
 BASE_URL = f"http://127.0.0.1:{PUERTO}/v1"
 
 API_CONTACTOS = f"{BASE_URL}/contactos"
-API_CONTACTO = f"{BASE_URL}/contactos"
+API_CONTACTO = f"{BASE_URL}/contacto"
 
 class Index:
     def GET(self):
