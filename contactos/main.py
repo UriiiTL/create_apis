@@ -16,7 +16,7 @@ ZONA_MX = pytz.timezone("America/Mexico_City")
 class Contacto(BaseModel):
     """Modelo de datos para un contacto"""
     nombre: str = Field(..., min_length=1, max_length=100, description="Nombre del contacto")
-    email: str = Field(..., description="Correo electrónico del contacto")
+    email: EmailStr = Field(..., description="Correo electrónico del contacto")
     telefono: str = Field(..., min_length=10, max_length=10, description="Teléfono del contacto")
 
 class ContactoResponse(Contacto):
@@ -525,40 +525,3 @@ async def delete_contacto(
         print(f"Error: {e}\n{traceback.format_exc()}")
         return error_response("Error al eliminar el contacto", 500)
 
-    conn.commit()
-    conn.close()
-
-    return {"message": "Contacto creado"}
-
-@app.put("/v1/contactos/{id_contacto}")
-async def update_contacto(id_contacto: int, data: dict):
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-
-    cursor.execute(
-        "UPDATE contactos SET nombre=?, telefono=?, email=? WHERE id_contacto=?",
-        (data["nombre"], data["telefono"], data["email"], id_contacto)
-    )
-
-    conn.commit()
-    conn.close()
-
-    return {"message": "Contacto actualizado"}
-
-@app.delete("/v1/contactos/{id_contacto}")
-async def delete_contacto(id_contacto: int):
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-
-    cursor.execute(
-        "DELETE FROM contactos WHERE id_contacto=?",
-        (id_contacto,)
-    )
-
-    conn.commit()
-    conn.close()
-
-    return {"message": "Contacto eliminado"}
-
-if __name__ == "__main__":
-    main()
